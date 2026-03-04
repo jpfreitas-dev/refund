@@ -6,6 +6,8 @@ const category = document.getElementById("category")
 
 // Seleciona os elementos da lista
 const expenseList = document.querySelector("ul")
+const expensesQuantity = document.querySelector("aside header p span")
+const expensesTotal = document.querySelector("aside header h2")
 
 // Captura o evento de input para formatar o valor
 amount.oninput = () => {
@@ -27,7 +29,6 @@ function formatCurrencyBRL(value) {
   return value
 }
 
-
 // Captura o evento de submit do formulário para obter os valores
 form.onsubmit = (event) => {
   event.preventDefault()
@@ -45,6 +46,7 @@ form.onsubmit = (event) => {
   expenseAdd(newExpense)
 }
 
+// Adiciona um novo item na lista
 function expenseAdd(newExpense) {
   try {
 
@@ -86,8 +88,44 @@ function expenseAdd(newExpense) {
     // Adiciona as informações no item e depois na lista
     expenseItem.append(expenseIcon, expenseInfo, expenseAmount, removeIcon)
     expenseList.append(expenseItem)
+
+    updateTotals()
   } catch (error) {
     alert("Não foi possível atualizar a lista de despesas.")
     console.log(error);
+  }
+}
+
+// Atualiza os totais das despesas
+function updateTotals(){
+  try {
+
+    const items = expenseList.children
+    expensesQuantity.textContent = `${items.length} ${items.length > 1 ? "despesas" : "despesa"}`
+    
+    let total = 0
+    for(let item = 0; item < items.length; item++){
+      const itemAmount = items[item].querySelector(".expense-amount")
+      let value = itemAmount.textContent.replace(/[^\d,]/g, "").replace(",", ".")
+
+      value = parseFloat(value)
+
+      if (isNaN(value)) {
+        return alert("Não foi possível calcular o total. O valor não parece ser um número.")
+      }
+
+      total += Number(value)
+    }
+
+    const symbolBRL = document.createElement("small")
+    symbolBRL.textContent = "R$"
+
+    total = formatCurrencyBRL(total).toUpperCase().replace("R$", "")
+    expensesTotal.innerHTML = ""
+    expensesTotal.append(symbolBRL, total)
+
+  } catch (error) {
+    console.log(error)
+    alert("Não foi possível atualizar os totais")
   }
 }
