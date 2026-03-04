@@ -49,7 +49,6 @@ form.onsubmit = (event) => {
 // Adiciona um novo item na lista
 function expenseAdd(newExpense) {
   try {
-
     const expenseItem = document.createElement("li")
     expenseItem.classList.add("expense")
 
@@ -89,6 +88,7 @@ function expenseAdd(newExpense) {
     expenseItem.append(expenseIcon, expenseInfo, expenseAmount, removeIcon)
     expenseList.append(expenseItem)
 
+    formClear()
     updateTotals()
   } catch (error) {
     alert("Não foi possível atualizar a lista de despesas.")
@@ -99,7 +99,6 @@ function expenseAdd(newExpense) {
 // Atualiza os totais das despesas
 function updateTotals(){
   try {
-
     const items = expenseList.children
     expensesQuantity.textContent = `${items.length} ${items.length > 1 ? "despesas" : "despesa"}`
     
@@ -128,4 +127,22 @@ function updateTotals(){
     console.log(error)
     alert("Não foi possível atualizar os totais")
   }
+}
+
+// Captura o clique no botão e remove o item da lista
+expenseList.addEventListener("click", function (event) {
+  if (event.target.classList.contains("remove-icon")) {
+    const item = event.target.closest(".expense")
+    item.remove()
+  }
+
+  updateTotals()
+})
+
+// Limpa os campos do formulário
+function formClear() {
+  expense.value = ""
+  category.value = ""
+  amount.value = ""
+  expense.focus()
 }
